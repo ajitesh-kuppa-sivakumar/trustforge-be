@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { BullModule } from "@nestjs/bull";
 import { AuthModule } from "./auth/auth.module";
@@ -20,11 +20,15 @@ import { DashboardModule } from "./dashboard/dashboard.module";
         limit: 10,
       },
     ]),
-    BullModule.forRoot({
-      redis: {
-        host: "localhost",
-        port: 6379,
-      },
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get<string>("REDIS_HOST", "localhost"),
+          port: configService.get<number>("REDIS_PORT", 6379),
+        },
+      }),
+      inject: [ConfigService],
     }),
     BullModule.registerQueue({
       name: "scan", // Register the "scan" queue
