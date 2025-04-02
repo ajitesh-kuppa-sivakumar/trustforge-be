@@ -136,14 +136,6 @@ export class ScanProcessor {
 
       const recommendations = this.generateRecommendations(combinedResults);
 
-      this.logger.debug("Updating scan record with data:", {
-        scan_status: "completed",
-        tf_score: tfScore,
-        pdf_report_url: pdfPath,
-        report_data: combinedResults,
-        // Exclude recommendations from the log as well
-      });
-
       if (!scanId) {
         throw new Error("Invalid scanId");
       }
@@ -154,8 +146,6 @@ export class ScanProcessor {
         pdf_report_url: pdfPath || "",
         report_data: combinedResults || {},
       };
-
-      this.logger.debug("Prepared update data:", updateData);
 
       const { error: updateError } = await this.supabaseService
         .getAdminClient()
