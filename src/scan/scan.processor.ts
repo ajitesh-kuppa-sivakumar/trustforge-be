@@ -37,6 +37,9 @@ export class ScanProcessor {
     try {
       this.logger.log(`Processing scan job: ${job.id}`);
       const { scanId, userId, filePath } = job.data;
+      if (!scanId) {
+        throw new Error("Invalid scanId");
+      }
       const tempDir = path.join(process.cwd(), "temp", scanId);
       await fsPromises.mkdir(tempDir, { recursive: true });
 
@@ -133,21 +136,35 @@ export class ScanProcessor {
 
       const recommendations = this.generateRecommendations(combinedResults);
 
-      // Include recommendations in the scan record
+      this.logger.debug("Updating scan record with data:", {
+        scan_status: "completed",
+        tf_score: tfScore,
+        pdf_report_url: pdfPath,
+        report_data: combinedResults,
+        // Exclude recommendations from the log as well
+      });
+
+      if (!scanId) {
+        throw new Error("Invalid scanId");
+      }
+
+      const updateData = {
+        scan_status: "completed",
+        tf_score: tfScore || 0,
+        pdf_report_url: pdfPath || "",
+        report_data: combinedResults || {},
+      };
+
+      this.logger.debug("Prepared update data:", updateData);
+
       const { error: updateError } = await this.supabaseService
         .getAdminClient()
         .from("scans")
-        .update({
-          scan_status: "completed",
-          tf_score: tfScore,
-          pdf_report_url: pdfPath,
-          report_data: combinedResults,
-          recommendations, // Add recommendations here
-        })
+        .update(updateData)
         .eq("scan_id", scanId);
 
       if (updateError) {
-        this.logger.error("Failed to update scan record");
+        this.logger.error("Supabase update error details:", updateError);
         throw new Error("Failed to update scan record");
       }
 
@@ -872,6 +889,7 @@ export class ScanProcessor {
               "X-Mobsf-Api-Key": this.mobSFApiKey,
               "Content-Type": "application/x-www-form-urlencoded",
             },
+            timeout: 60000, // Set timeout to 60 seconds
           }
         );
 
@@ -1038,7 +1056,7 @@ export class ScanProcessor {
     const url = `https://www.virustotal.com/api/v3/analyses/${analysisId}`;
     let attempts = 0;
     const maxAttempts = 30;
-    const pollInterval = 10000;
+    const pollInterval = 15000;
 
     while (attempts < maxAttempts) {
       try {
@@ -1139,7 +1157,7 @@ export class ScanProcessor {
     const url = `https://api.metadefender.com/v4/file/${dataId}`;
     let attempts = 0;
     const maxAttempts = 30;
-    const pollInterval = 10000;
+    const pollInterval = 15000;
 
     while (attempts < maxAttempts) {
       try {
