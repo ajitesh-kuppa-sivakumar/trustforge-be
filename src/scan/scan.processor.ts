@@ -25,7 +25,7 @@ export class ScanProcessor {
   private readonly virusTotalApiKey = process.env.VIRUSTOTAL_API_KEY;
   private readonly metaDefenderUrl = "https://api.metadefender.com/v4/file";
   private readonly metaDefenderApiKey = process.env.METADEFENDER_API_KEY;
-  private readonly hybridAnalysisUrl = process.env.HYBRID_ANALYSIS_BASE_URL;
+  private readonly hybridAnalysisUrl = "https://www.hybrid-analysis.com/api/v2";
   private readonly hybridAnalysisApiKey = process.env.HYBRID_ANALYSIS_API_KEY;
 
   constructor(private readonly supabaseService: SupabaseService) {}
