@@ -1,0 +1,20 @@
+services:
+  trustforge-be:
+    image: trustforge-be:v1.0
+    container_name: trustforge-be
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - SUPABASE_URL=http://192.168.1.149:8000
+      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE
+      - SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q
+      - MOBSF_API_KEY=b460af255dd393c50bfd6e49e7e56609dbf5ee640d74682a117b44027e1a19b0
+      - MOBSF_API_URL=http://192.168.1.149:9005
+      - REDIS_HOST=192.168.1.149
+      - REDIS_PORT=6379
+      - APP_PORT=3001
+      - NODE_ENV=development
+      - VIRUSTOTAL_API_KEY=1c1920eff9e5a1fd07e52540a4d0ca1c0c1aeeadebc3e97c9367dae6754389c6
+      - METADEFENDER_API_KEY=bcffc15aaa652c5d7fd206c08a1e9e4d
+      - HYBRID_ANALYSIS_API_KEY=qeerql875878186bhhiptiaua32216cfu9b9ezzt6e25d9d4qyvvs1skfb6f14ba
